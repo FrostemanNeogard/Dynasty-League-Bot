@@ -4,6 +4,7 @@ const {
   ButtonBuilder,
   ButtonStyle,
   ActionRowBuilder,
+  PermissionsBitField,
 } = require("discord.js");
 
 module.exports = {
@@ -14,7 +15,13 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("invite")
     .setDescription("Send an embed with a button to join a group chat."),
-  async execute(interaction) {
+  async execute(interaction, client) {
+    const guild = interaction.guild;
+    const channel = guild.channels.cache.find(
+      (channel) => channel.name === "groupchat-1"
+    );
+    const member = interaction.user;
+
     const embed = new EmbedBuilder()
       .setTitle("Groupchat Invitation")
       .setDescription("Would you like to join groupchat #1?");
@@ -46,15 +53,18 @@ module.exports = {
       });
 
       if (confirmation.customId === "join") {
-        console.log("Pressed join!");
-        disableButtons();
+        channel.permissionOverwrites.set([
+          {
+            id: member.id,
+            allow: [PermissionsBitField.Flags.SendMessages],
+            allow: [PermissionsBitField.Flags.ViewChannel],
+          },
+        ]);
         await confirmation.update({
           content: "Invitation accepted!",
           components: [],
         });
       } else if (confirmation.customId === "cancel") {
-        disableButtons();
-        console.log("Cancelling!");
         await confirmation.update({
           content: "Invitation declined.",
           components: [],
@@ -64,11 +74,6 @@ module.exports = {
       await interaction.editReply({
         content: "This invitation has expired.",
       });
-    }
-
-    function disableButtons() {
-      joinButton.setDisabled(true);
-      cancelButton.setDisabled(true);
     }
   },
 };
