@@ -37,7 +37,7 @@ const rest = new REST().setToken(TOKEN);
 // and deploy your commands!
 (async () => {
   try {
-    await rest.put(Routes.applicationCommands(CLIENT_ID), {
+    await rest.put(Routes.applicationGuildCommands(CLIENT_ID, guild_id), {
       body: [],
     });
     console.log(
@@ -46,9 +46,12 @@ const rest = new REST().setToken(TOKEN);
 
     // The put method is used to fully refresh all commands in the guild with the current set
     console.log("Commands:", commands);
-    const data = await rest.put(Routes.applicationCommands(CLIENT_ID), {
-      body: commands,
-    });
+    const data = await rest.put(
+      Routes.applicationGuildCommands(CLIENT_ID, guild_id),
+      {
+        body: commands,
+      }
+    );
 
     console.log(
       `Successfully reloaded ${data.length} application (/) commands.`
