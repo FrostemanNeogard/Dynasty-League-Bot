@@ -34,6 +34,7 @@ module.exports = {
     const response = await interaction.reply({
       embeds: [embed],
       components: [row],
+      ephemeral: true,
     });
 
     const collectorFilter = (i) => i.user.id === interaction.user.id;
@@ -41,7 +42,7 @@ module.exports = {
     try {
       const confirmation = await response.awaitMessageComponent({
         filter: collectorFilter,
-        time: 0,
+        time: 600_000,
       });
 
       if (confirmation.customId === "join") {
@@ -61,7 +62,7 @@ module.exports = {
       }
     } catch (e) {
       await interaction.editReply({
-        content: "Confirmation not received within 1 minute, cancelling",
+        content: "This invitation has expired.",
       });
     }
 
