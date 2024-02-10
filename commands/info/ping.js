@@ -11,8 +11,4 @@ module.exports = {
   async execute(interaction) {
     await interaction.reply("Pong!");
   },
-  run: async ({ client, msg, args }) => {
-    // Reply with "Pong!"
-    return msg.reply("Pong!");
-  },
 };
