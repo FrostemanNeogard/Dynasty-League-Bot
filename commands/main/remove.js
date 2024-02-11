@@ -38,6 +38,11 @@ module.exports = {
 
     channel.permissionOverwrites.set([
       {
+        id: guild.id,
+        deny: [PermissionsBitField.Flags.SendMessages],
+        deny: [PermissionsBitField.Flags.ViewChannel],
+      },
+      {
         id: member.id,
         deny: [PermissionsBitField.Flags.SendMessages],
         deny: [PermissionsBitField.Flags.ViewChannel],
@@ -45,7 +50,7 @@ module.exports = {
     ]);
 
     return await interaction.reply({
-      content: `The given user has been removed from the following channel: "${channelName}".`,
+      content: `${member.tag} given user has been removed from the following channel: "${channelName}".`,
       ephemeral: true,
     });
   },
