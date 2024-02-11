@@ -55,6 +55,11 @@ module.exports = {
       if (confirmation.customId === "join") {
         channel.permissionOverwrites.set([
           {
+            id: guild.id,
+            deny: [PermissionsBitField.Flags.SendMessages],
+            deny: [PermissionsBitField.Flags.ViewChannel],
+          },
+          {
             id: member.id,
             allow: [PermissionsBitField.Flags.SendMessages],
             allow: [PermissionsBitField.Flags.ViewChannel],
