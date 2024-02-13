@@ -5,6 +5,8 @@ const {
   ButtonStyle,
   ActionRowBuilder,
   PermissionsBitField,
+  ChannelType,
+  Colors,
 } = require("discord.js");
 
 module.exports = {
@@ -17,9 +19,6 @@ module.exports = {
     .setDescription("Send an embed with a button to join a group chat."),
   async execute(interaction, client) {
     const guild = interaction.guild;
-    const channel = guild.channels.cache.find(
-      (channel) => channel.name === "groupchat-1"
-    );
     const member = interaction.user;
 
     const embed = new EmbedBuilder()
@@ -53,18 +52,42 @@ module.exports = {
       });
 
       if (confirmation.customId === "join") {
-        channel.permissionOverwrites.set([
+        const groupchatChannelRegex = /^groupchat-\d+$/;
+        const channelsMap = guild.channels.cache.filter((channel) =>
+          groupchatChannelRegex.test(channel.name)
+        );
+        const channels = [...channelsMap];
+
+        const groupchatCategory = "1204725402816348170";
+        const newGroupchatName = `groupchat-${channels.length + 1}`;
+
+        const newRole = await guild.roles.create({
+          name: newGroupchatName,
+          color: Colors.Blurple,
+          reason: `Create role for "${newGroupchatName}" chatroom.`,
+        });
+        const newChannel = await guild.channels.create({
+          name: newGroupchatName,
+          type: ChannelType.GuildText,
+          parent: groupchatCategory,
+        });
+
+        newChannel.permissionOverwrites.set([
+          {
+            id: newRole.id,
+            allow: [PermissionsBitField.Flags.ViewChannel],
+            allow: [PermissionsBitField.Flags.SendMessages],
+            allow: [PermissionsBitField.Flags.ReadMessageHistory],
+          },
           {
             id: guild.id,
-            deny: [PermissionsBitField.Flags.SendMessages],
             deny: [PermissionsBitField.Flags.ViewChannel],
-          },
-          {
-            id: member.id,
-            allow: [PermissionsBitField.Flags.SendMessages],
-            allow: [PermissionsBitField.Flags.ViewChannel],
+            deny: [PermissionsBitField.Flags.SendMessages],
+            deny: [PermissionsBitField.Flags.ReadMessageHistory],
           },
         ]);
+        guild.members.cache.get(member.id).roles.add(newRole);
+
         await confirmation.update({
           content: "Invitation accepted!",
           components: [],
