@@ -46,7 +46,7 @@ module.exports = {
     await guild.members.cache.get(member.id).roles.add(channelRole);
 
     return await interaction.reply({
-      content: `${member.tag} given user has been added from the following channel: "${channel.name}".`,
+      content: `${member.tag} given user has been added to the following groupchat: "${channel.name}".`,
       ephemeral: true,
     });
   },
