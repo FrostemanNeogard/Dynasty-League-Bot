@@ -74,11 +74,12 @@ module.exports = {
         }
         await guild.members.cache.get(member.id).roles.add(role);
 
+        // Determine if a channel with an available spot already exists
         let channel;
         for (let i = 0; i < channels.length; i++) {
-          const roleName = channels[i].name;
+          const roleName = channels[i][1].name;
           const respectiveRole = await guild.roles.cache.find(
-            (role) => role.name === "groupchat-1"
+            (role) => role.name === roleName
           );
           const memberCount = respectiveRole.members.size;
           if (memberCount < 12) {
@@ -86,6 +87,7 @@ module.exports = {
           }
         }
 
+        // If channel doesn't exist as determined by loop above, create new channel
         if (!channel) {
           guild.channels.create({
             name: newGroupchatName,
@@ -104,17 +106,20 @@ module.exports = {
           });
         }
 
+        // Update initial message
         await confirmation.update({
           content: "Invitation accepted!",
           components: [],
         });
       } else if (confirmation.customId === "cancel") {
+        // If user pressed "decline", update the message to inform them about the declined invitation, then do nothing
         await confirmation.update({
           content: "Invitation declined.",
           components: [],
         });
       }
     } catch (e) {
+      // Catch any errors that may occurr, and handle invitation timeout
       await interaction.editReply({
         content: "This invitation has expired.",
       });
