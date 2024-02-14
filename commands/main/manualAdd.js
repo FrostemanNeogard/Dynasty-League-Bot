@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionsBitField } = require("discord.js");
+const { SlashCommandBuilder } = require("discord.js");
 
 module.exports = {
   name: "manualadd",
@@ -24,7 +24,7 @@ module.exports = {
   async execute(interaction, client) {
     const guild = interaction.guild;
     const member = interaction.options.getUser("user");
-    const channel = interaction.options.getUser("channel");
+    const channel = interaction.options.getChannel("channel");
 
     if (!member) {
       return await interaction.reply({
@@ -46,7 +46,7 @@ module.exports = {
     await guild.members.cache.get(member.id).roles.add(channelRole);
 
     return await interaction.reply({
-      content: `${member.tag} given user has been added from the following channel: "${channelName}".`,
+      content: `${member.tag} given user has been added from the following channel: "${channel.name}".`,
       ephemeral: true,
     });
   },
