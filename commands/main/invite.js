@@ -62,28 +62,47 @@ module.exports = {
       if (confirmation.customId === "join") {
         const groupchatCategory = "1204725402816348170";
 
-        const newRole = await guild.roles.create({
-          name: newGroupchatName,
-          color: Colors.Blurple,
-          reason: `Create role for "${newGroupchatName}" chatroom.`,
-        });
-        guild.channels.create({
-          name: newGroupchatName,
-          type: ChannelType.GuildText,
-          parent: groupchatCategory,
-          permissionOverwrites: [
-            {
-              id: newRole.id,
-              allow: [PermissionsBitField.Flags.ViewChannel],
-            },
-            {
-              id: guild.id,
-              deny: [PermissionsBitField.Flags.ViewChannel],
-            },
-          ],
-        });
+        let role = guild.roles.cache.find(
+          (role) => role.name === newGroupchatName
+        );
+        if (!role) {
+          role = await guild.roles.create({
+            name: newGroupchatName,
+            color: Colors.Blurple,
+            reason: `Create role for "${newGroupchatName}" chatroom.`,
+          });
+        }
+        await guild.members.cache.get(member.id).roles.add(role);
 
-        guild.members.cache.get(member.id).roles.add(newRole);
+        let channel;
+        for (let i = 0; i < channels.length; i++) {
+          const roleName = channels[i].name;
+          const respectiveRole = await guild.roles.cache.find(
+            (role) => role.name === "groupchat-1"
+          );
+          const memberCount = respectiveRole.members.size;
+          if (memberCount < 12) {
+            channel = channels[i];
+          }
+        }
+
+        if (!channel) {
+          guild.channels.create({
+            name: newGroupchatName,
+            type: ChannelType.GuildText,
+            parent: groupchatCategory,
+            permissionOverwrites: [
+              {
+                id: role.id,
+                allow: [PermissionsBitField.Flags.ViewChannel],
+              },
+              {
+                id: guild.id,
+                deny: [PermissionsBitField.Flags.ViewChannel],
+              },
+            ],
+          });
+        }
 
         await confirmation.update({
           content: "Invitation accepted!",
