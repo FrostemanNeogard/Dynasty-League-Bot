@@ -13,15 +13,18 @@ module.exports = {
         .setName("user")
         .setDescription("The user to add to a groupchat.")
         .setRequired(true)
+    )
+    .addChannelOption((option) =>
+      option
+        .setName("channel")
+        .setDescription("The groupchat to add user to.")
+        .setRequired(true)
     ),
 
   async execute(interaction, client) {
     const guild = interaction.guild;
     const member = interaction.options.getUser("user");
-    const channelName = "groupchat-1";
-    const channel = guild.channels.cache.find(
-      (channel) => channel.name === channelName
-    );
+    const channel = interaction.options.getUser("channel");
 
     if (!member) {
       return await interaction.reply({
