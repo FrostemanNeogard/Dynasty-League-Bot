@@ -21,9 +21,17 @@ module.exports = {
     const guild = interaction.guild;
     const member = interaction.user;
 
+    const groupchatChannelRegex = /^groupchat-\d+$/;
+    const channelsMap = guild.channels.cache.filter((channel) =>
+      groupchatChannelRegex.test(channel.name)
+    );
+    const channels = [...channelsMap];
+
+    const newGroupchatName = `groupchat-${channels.length + 1}`;
+
     const embed = new EmbedBuilder()
       .setTitle("Groupchat Invitation")
-      .setDescription("Would you like to join groupchat #1?");
+      .setDescription(`Would you like to join ${newGroupchatName}?`);
 
     const joinButton = new ButtonBuilder()
       .setCustomId("join")
@@ -52,40 +60,29 @@ module.exports = {
       });
 
       if (confirmation.customId === "join") {
-        const groupchatChannelRegex = /^groupchat-\d+$/;
-        const channelsMap = guild.channels.cache.filter((channel) =>
-          groupchatChannelRegex.test(channel.name)
-        );
-        const channels = [...channelsMap];
-
         const groupchatCategory = "1204725402816348170";
-        const newGroupchatName = `groupchat-${channels.length + 1}`;
 
         const newRole = await guild.roles.create({
           name: newGroupchatName,
           color: Colors.Blurple,
           reason: `Create role for "${newGroupchatName}" chatroom.`,
         });
-        const newChannel = await guild.channels.create({
+        guild.channels.create({
           name: newGroupchatName,
           type: ChannelType.GuildText,
           parent: groupchatCategory,
+          permissionOverwrites: [
+            {
+              id: newRole.id,
+              allow: [PermissionsBitField.Flags.ViewChannel],
+            },
+            {
+              id: guild.id,
+              deny: [PermissionsBitField.Flags.ViewChannel],
+            },
+          ],
         });
 
-        newChannel.permissionOverwrites.set([
-          {
-            id: newRole.id,
-            allow: [PermissionsBitField.Flags.ViewChannel],
-            allow: [PermissionsBitField.Flags.SendMessages],
-            allow: [PermissionsBitField.Flags.ReadMessageHistory],
-          },
-          {
-            id: guild.id,
-            deny: [PermissionsBitField.Flags.ViewChannel],
-            deny: [PermissionsBitField.Flags.SendMessages],
-            deny: [PermissionsBitField.Flags.ReadMessageHistory],
-          },
-        ]);
         guild.members.cache.get(member.id).roles.add(newRole);
 
         await confirmation.update({
