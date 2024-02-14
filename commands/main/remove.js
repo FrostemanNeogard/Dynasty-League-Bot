@@ -36,18 +36,11 @@ module.exports = {
       });
     }
 
-    channel.permissionOverwrites.set([
-      {
-        id: guild.id,
-        deny: [PermissionsBitField.Flags.SendMessages],
-        deny: [PermissionsBitField.Flags.ViewChannel],
-      },
-      {
-        id: member.id,
-        deny: [PermissionsBitField.Flags.SendMessages],
-        deny: [PermissionsBitField.Flags.ViewChannel],
-      },
-    ]);
+    const channelRole = guild.roles.cache.find(
+      (role) => role.name == channelName
+    );
+
+    await guild.members.cache.get(member.id).roles.remove(channelRole);
 
     return await interaction.reply({
       content: `${member.tag} given user has been removed from the following channel: "${channelName}".`,

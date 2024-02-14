@@ -36,18 +36,11 @@ module.exports = {
       });
     }
 
-    channel.permissionOverwrites.set([
-      {
-        id: guild.id,
-        deny: [PermissionsBitField.Flags.SendMessages],
-        deny: [PermissionsBitField.Flags.ViewChannel],
-      },
-      {
-        id: member.id,
-        allow: [PermissionsBitField.Flags.SendMessages],
-        allow: [PermissionsBitField.Flags.ViewChannel],
-      },
-    ]);
+    const channelRole = guild.roles.cache.find(
+      (role) => role.name == channel.name
+    );
+
+    await guild.members.cache.get(member.id).roles.add(channelRole);
 
     return await interaction.reply({
       content: `${member.tag} given user has been added from the following channel: "${channelName}".`,
