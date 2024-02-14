@@ -82,7 +82,7 @@ module.exports = {
             (role) => role.name === roleName
           );
           const memberCount = respectiveRole.members.size;
-          if (memberCount < 12) {
+          if (memberCount < 1) {
             channel = channels[i];
           }
         }
