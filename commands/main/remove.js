@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionsBitField } = require("discord.js");
+const { SlashCommandBuilder } = require("discord.js");
 
 module.exports = {
   name: "remove",
@@ -7,21 +7,24 @@ module.exports = {
   devCommand: false,
   data: new SlashCommandBuilder()
     .setName("remove")
-    .setDescription("Remove a specified user from their respective groupchat.")
+    .setDescription("Remove a specified user from a groupchat.")
     .addUserOption((option) =>
       option
         .setName("user")
-        .setDescription("The user to remove.")
+        .setDescription("The user to remove from a groupchat.")
+        .setRequired(true)
+    )
+    .addChannelOption((option) =>
+      option
+        .setName("channel")
+        .setDescription("The groupchat to remove said user from.")
         .setRequired(true)
     ),
 
   async execute(interaction, client) {
     const guild = interaction.guild;
     const member = interaction.options.getUser("user");
-    const channelName = "groupchat-1";
-    const channel = guild.channels.cache.find(
-      (channel) => channel.name === channelName
-    );
+    const channel = interaction.options.getChannel("channel");
 
     if (!member) {
       return await interaction.reply({
@@ -37,13 +40,13 @@ module.exports = {
     }
 
     const channelRole = guild.roles.cache.find(
-      (role) => role.name == channelName
+      (role) => role.name == channel.name
     );
 
     await guild.members.cache.get(member.id).roles.remove(channelRole);
 
     return await interaction.reply({
-      content: `${member.tag} given user has been removed from the following channel: "${channelName}".`,
+      content: `${member.tag} given user has been added from the following channel: "${channel.name}".`,
       ephemeral: true,
     });
   },
