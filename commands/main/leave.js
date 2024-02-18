@@ -25,14 +25,14 @@ module.exports = {
       groupchatChannelRegex.test(role.name)
     );
 
-    if (groupchatRoles.length < 1) {
+    if (!groupchatRoles) {
       return await interaction.reply({
         content: `You are not in any groupchats.`,
         ephemeral: true,
       });
     }
 
-    const groupchatName = [...groupchatRoles][0];
+    const groupchatName = groupchatRoles.name;
 
     const channelRole = guild.roles.cache.find(
       (role) => role.name == groupchatName
