@@ -1,12 +1,12 @@
 const { SlashCommandBuilder } = require("discord.js");
 
 module.exports = {
-  name: "remove",
+  name: "manualremove",
   category: "main",
   permissions: [],
   devCommand: false,
   data: new SlashCommandBuilder()
-    .setName("remove")
+    .setName("manualremove")
     .setDescription("Remove a specified user from a groupchat.")
     .addUserOption((option) =>
       option
