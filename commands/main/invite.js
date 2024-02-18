@@ -35,6 +35,7 @@ module.exports = {
 
     if (isUserInGroupchat) {
       return interaction.reply({
+        ephemeral: true,
         embeds: [userInGroupchatEmbed],
         components: [],
       });
@@ -67,7 +68,7 @@ module.exports = {
     try {
       const confirmation = await response.awaitMessageComponent({
         filter: collectorFilter,
-        time: 4_000,
+        time: 20_000,
       });
 
       if (confirmation.customId === "join") {
@@ -148,7 +149,7 @@ module.exports = {
 
       const timeoutEmbed = new EmbedBuilder()
         .setTitle("Groupchat Invitation")
-        .setDescription(`This invitation has timed out.`);
+        .setDescription(`This invitation has expired.`);
 
       // Catch any errors that may occurr, and handle invitation timeout
       await interaction.editReply({
