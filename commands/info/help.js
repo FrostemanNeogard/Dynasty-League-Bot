@@ -34,7 +34,7 @@ module.exports = {
         }
       );
     await interaction.reply({
-      ephemeral: true,
+      ephemeral: false,
       embeds: [responseEmbed],
     });
   },
