@@ -28,12 +28,12 @@ module.exports = {
       if (interaction.replied || interaction.deferred) {
         await interaction.followUp({
           content: "An error occurred when trying to execute this command.",
-          ephemeral: true,
+          ephemeral: false,
         });
       } else {
         await interaction.reply({
           content: "An error occurred when trying to execute this command.",
-          ephemeral: true,
+          ephemeral: false,
         });
       }
     }
