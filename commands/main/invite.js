@@ -84,14 +84,21 @@ module.exports = {
         // Determine if a channel with an available spot already exists
         let channel;
         for (let i = 0; i < channels.length; i++) {
-          const respectiveRole = await guild.roles.cache.find(
-            (role) => role.name === channels[i].name
-          );
+          const respectiveRole = await (
+            await guild.roles.fetch()
+          ).find((role) => role.name === channels[i].name);
+
+          const allMembers = await guild.members.fetch();
+          let trueCount = 0;
+          allMembers.forEach((value) => {
+            console.log(value.roles.size);
+          });
+
           const memberCount = respectiveRole ? respectiveRole.members.size : 0;
           console.log(
             `Member count for ${respectiveRole.name}: ${memberCount}`
           );
-          if (memberCount < 5) {
+          if (memberCount < 4) {
             console.log(`Setting channel to ${channels[i].name}`);
             channel = channels[i];
             break;
@@ -103,7 +110,6 @@ module.exports = {
           const allGroupchatChannels = guild.channels.cache.filter((channel) =>
             groupchatChannelRegex.test(channel.name)
           );
-          console.log("All groupchats", allGroupchatChannels);
           newGroupchatName = `groupchat-${allGroupchatChannels.size}`;
           let role = guild.roles.cache.find(
             (role) => role.name === newGroupchatName
