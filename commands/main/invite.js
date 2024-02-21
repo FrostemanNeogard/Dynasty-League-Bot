@@ -24,26 +24,17 @@ module.exports = {
 
     const groupchatChannelRegex = /^groupchat-\d+$/;
 
-    const userInGroupchatEmbed = new EmbedBuilder()
-      .setTitle("Groupchat Invitation")
-      .setDescription("You are already in a groupchat.");
-
     const isUserInGroupchat = guild.members.cache
       .get(member.id)
       .roles.cache.some((role) => groupchatChannelRegex.test(role.name));
-    console.log("Is in chat:", isUserInGroupchat);
-
-    if (isUserInGroupchat) {
-      return interaction.reply({
-        ephemeral: true,
-        embeds: [userInGroupchatEmbed],
-        components: [],
-      });
-    }
 
     const embed = new EmbedBuilder()
       .setTitle("Groupchat Invitation")
-      .setDescription(`Would you like to join a groupchat?`);
+      .setDescription(
+        `Would you like to join ${
+          isUserInGroupchat ? "another" : "a"
+        } groupchat?`
+      );
 
     const joinButton = new ButtonBuilder()
       .setCustomId("join")
@@ -60,7 +51,7 @@ module.exports = {
     const response = await interaction.reply({
       embeds: [embed],
       components: [row],
-      ephemeral: true,
+      ephemeral: false,
     });
 
     const collectorFilter = (i) => i.user.id === interaction.user.id;
@@ -73,10 +64,15 @@ module.exports = {
 
       if (confirmation.customId === "join") {
         const channels = [];
-        guild.channels.cache.filter((channel) => {
+        guild.channels.cache.filter(async (channel) => {
           if (groupchatChannelRegex.test(channel.name)) {
             console.log("PUSHING CHANNEL:", channel.name);
-            return channels.push(channel);
+            const isAlreadyInGroupchat = guild.members.cache
+              .get(member.id)
+              .roles.cache.some((role) => role.name == channel.name);
+            if (!isAlreadyInGroupchat) {
+              return channels.push(channel);
+            }
           }
         });
 
@@ -95,7 +91,7 @@ module.exports = {
           console.log(
             `Member count for ${respectiveRole.name}: ${memberCount}`
           );
-          if (memberCount < 2) {
+          if (memberCount < 5) {
             console.log(`Setting channel to ${channels[i].name}`);
             channel = channels[i];
             break;
@@ -104,7 +100,11 @@ module.exports = {
 
         let newGroupchatName;
         if (!channel) {
-          newGroupchatName = `groupchat-${channels.length}`;
+          const allGroupchatChannels = guild.channels.cache.filter((channel) =>
+            groupchatChannelRegex.test(channel.name)
+          );
+          console.log("All groupchats", allGroupchatChannels);
+          newGroupchatName = `groupchat-${allGroupchatChannels.size}`;
           let role = guild.roles.cache.find(
             (role) => role.name === newGroupchatName
           );
