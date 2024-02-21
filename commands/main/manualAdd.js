@@ -29,13 +29,13 @@ module.exports = {
     if (!member) {
       return await interaction.reply({
         content: `Invalid user.`,
-        ephemeral: true,
+        ephemeral: false,
       });
     }
     if (!channel) {
       return await interaction.reply({
         content: `No channel was found.`,
-        ephemeral: true,
+        ephemeral: false,
       });
     }
 
@@ -47,7 +47,7 @@ module.exports = {
 
     return await interaction.reply({
       content: `User "${member.tag}" has been added to the following groupchat: "${channel.name}".`,
-      ephemeral: true,
+      ephemeral: false,
     });
   },
 };
