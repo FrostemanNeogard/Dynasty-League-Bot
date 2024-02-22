@@ -1,4 +1,5 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require("discord.js");
+const { capitalizeFirstLetters } = require("../../util/functions");
 
 module.exports = {
   name: "manualadd",
@@ -45,20 +46,24 @@ module.exports = {
       (role) => role.name == channel.name
     );
 
+    const formattedGroupName = capitalizeFirstLetters(
+      channel.name.replaceAll("-", " ")
+    );
+
     const isUserInGroupchat = guild.members.cache
       .get(member.id)
       .roles.cache.some((role) => role.name == channel.name);
 
     if (isUserInGroupchat) {
       return await interaction.reply({
-        content: `Error: User <@${member.id}> is already in the given groupchat: "${channel.name}".`,
+        content: `Error: User <@${member.id}> is already in the given groupchat: "${formattedGroupName}".`,
         ephemeral: false,
       });
     }
 
     await guild.members.cache.get(member.id).roles.add(channelRole);
     return await interaction.reply({
-      content: `User <@${member.id}> has been added to the following groupchat: "${channel.name}".`,
+      content: `User <@${member.id}> has been added to the following groupchat: "${formattedGroupName}".`,
       ephemeral: false,
     });
   },
