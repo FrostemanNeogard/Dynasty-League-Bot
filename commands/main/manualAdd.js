@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require("discord.js");
+const { SlashCommandBuilder, PermissionFlagsBits } = require("discord.js");
 
 module.exports = {
   name: "manualadd",
@@ -19,7 +19,9 @@ module.exports = {
         .setName("channel")
         .setDescription("The groupchat to add user to.")
         .setRequired(true)
-    ),
+    )
+    .setDMPermission(false)
+    .setDefaultMemberPermissions(PermissionFlagsBits.MoveMembers),
 
   async execute(interaction, client) {
     const guild = interaction.guild;
@@ -43,10 +45,20 @@ module.exports = {
       (role) => role.name == channel.name
     );
 
-    await guild.members.cache.get(member.id).roles.add(channelRole);
+    const isUserInGroupchat = guild.members.cache
+      .get(member.id)
+      .roles.cache.some((role) => role.name == channel.name);
 
+    if (isUserInGroupchat) {
+      return await interaction.reply({
+        content: `Error: User <@${member.id}> is already in the given groupchat: "${channel.name}".`,
+        ephemeral: false,
+      });
+    }
+
+    await guild.members.cache.get(member.id).roles.add(channelRole);
     return await interaction.reply({
-      content: `User "${member.tag}" has been added to the following groupchat: "${channel.name}".`,
+      content: `User <@${member.id}> has been added to the following groupchat: "${channel.name}".`,
       ephemeral: false,
     });
   },
