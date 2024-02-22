@@ -9,6 +9,7 @@ const {
 } = require("discord.js");
 
 const { embed_color } = require("../../config.json");
+const { capitalizeFirstLetters } = require("../../util/functions");
 
 module.exports = {
   name: "invite",
@@ -93,7 +94,9 @@ module.exports = {
 
           const memberCount = respectiveRole ? respectiveRole.members.size : 0;
           console.log(
-            `Member count for ${respectiveRole.name}: ${memberCount}`
+            `Member count for ${
+              respectiveRole ? respectiveRole.name : "UNKNOWN"
+            }: ${memberCount}`
           );
           if (memberCount < 12) {
             console.log(`Setting channel to ${channels[i].name}`);
@@ -194,17 +197,6 @@ module.exports = {
           },
         ],
       });
-    }
-
-    function capitalizeFirstLetters(string) {
-      const words = string.split(" ");
-      const output = [];
-      for (let i = 0; i < words.length; i++) {
-        const word = words[i];
-        const capitalizedWord = word[0].toUpperCase() + word.substring(1);
-        output.push(capitalizedWord);
-      }
-      return output.join(" ");
     }
   },
 };
