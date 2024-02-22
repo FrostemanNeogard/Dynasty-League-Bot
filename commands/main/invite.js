@@ -67,6 +67,10 @@ module.exports = {
       });
 
       if (confirmation.customId === "join") {
+        if (confirmation.user.id !== member.id) {
+          return;
+        }
+
         const channels = [];
         guild.channels.cache.filter(async (channel) => {
           if (groupchatChannelRegex.test(channel.name)) {
@@ -142,7 +146,7 @@ module.exports = {
 
         await confirmation.update({
           embeds: [acceptEmbed],
-          ephemeral: false,
+          ephemeral: true,
           components: [],
         });
       } else if (confirmation.customId === "cancel") {
