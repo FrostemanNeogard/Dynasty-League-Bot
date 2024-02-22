@@ -1,4 +1,5 @@
-const { SlashCommandBuilder } = require("discord.js");
+const { SlashCommandBuilder, ReactionUserManager } = require("discord.js");
+const { capitalizeFirstLetters } = require("../../util/functions");
 
 module.exports = {
   name: "leave",
@@ -22,25 +23,32 @@ module.exports = {
 
     if (!member) {
       return await interaction.reply({
-        content: `Invalid user.`,
+        content: `Error: No user was provided.`,
         ephemeral: false,
       });
     }
     if (!groupchat) {
       return await interaction.reply({
-        content: `No groupchat was found.`,
+        content: `Error: No groupchat was provided.`,
         ephemeral: false,
       });
     }
 
-    const groupchatChannelRegex = /^groupchat-\d+$/;
+    const groupchatChannelRegex = /^dynasty-league-\d+$/;
+    if (!groupchatChannelRegex.test(groupchat.name)) {
+      return await interaction.reply({
+        content: `Error: Selected channel must be a Dynasty League groupchat.`,
+        ephemeral: false,
+      });
+    }
+
     const groupchatRoles = member.roles.cache.find((role) =>
       groupchatChannelRegex.test(role.name)
     );
 
     if (!groupchatRoles) {
       return await interaction.reply({
-        content: `You are not in any groupchats.`,
+        content: `Error: You are not in any groupchats.`,
         ephemeral: false,
       });
     }
@@ -51,8 +59,12 @@ module.exports = {
 
     await guild.members.cache.get(member.id).roles.remove(channelRole);
 
+    const formattedGroupname = capitalizeFirstLetters(
+      groupchat.name.replaceAll("-", " ")
+    );
+
     return await interaction.reply({
-      content: `You have been successfully removed from the following groupchat: ${groupchat}.`,
+      content: `You have been successfully removed from the "${formattedGroupname}" groupchat.`,
       ephemeral: false,
     });
   },
