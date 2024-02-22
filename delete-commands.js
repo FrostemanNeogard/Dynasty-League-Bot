@@ -37,7 +37,7 @@ const rest = new REST().setToken(TOKEN);
 // and deploy your commands!
 (async () => {
   try {
-    await rest.put(Routes.applicationCommands(CLIENT_ID), {
+    await rest.put(Routes.applicationGuildCommands(CLIENT_ID, guild_id), {
       body: [],
     });
     console.log(`Deleted ${commands.length} application (/) commands.`);
