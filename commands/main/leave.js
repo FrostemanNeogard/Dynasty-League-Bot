@@ -13,8 +13,8 @@ module.exports = {
         .setName("groupchat")
         .setDescription("The groupchat to leave.")
         .setRequired(true)
-    ),
-
+    )
+    .setDMPermission(false),
   async execute(interaction, client) {
     const guild = interaction.guild;
     const member = interaction.member;
