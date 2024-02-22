@@ -122,7 +122,12 @@ module.exports = {
             role = await createRole(newGroupchatName);
           }
           await guild.members.cache.get(member.id).roles.add(role);
-          await createChannel(newGroupchatName, groupchatCategory, role.id);
+          const newChannel = await createChannel(
+            newGroupchatName,
+            groupchatCategory,
+            role.id
+          );
+          await sendInvitationNotification(newChannel, member);
         } else {
           newGroupchatName = channel.name;
           let role = guild.roles.cache.find(
@@ -132,6 +137,7 @@ module.exports = {
             role = await createRole(newGroupchatName);
           }
           await guild.members.cache.get(member.id).roles.add(role);
+          await sendInvitationNotification(channel, member);
         }
 
         // Update initial message
@@ -144,7 +150,7 @@ module.exports = {
           .setColor(embed_color)
           .setDescription(formattedResponse);
 
-        await confirmation.update({
+        return await confirmation.update({
           embeds: [acceptEmbed],
           ephemeral: true,
           components: [],
@@ -156,7 +162,7 @@ module.exports = {
           .setColor(embed_color)
           .setDescription(`This invitation has been declined.`);
 
-        await confirmation.update({
+        return await confirmation.update({
           embeds: [declineEmbed],
           components: [],
         });
@@ -170,7 +176,7 @@ module.exports = {
         .setDescription(`This invitation has expired.`);
 
       // Catch any errors that may occurr, and handle invitation timeout
-      await interaction.editReply({
+      return await interaction.editReply({
         embeds: [timeoutEmbed],
         components: [],
       });
@@ -200,6 +206,12 @@ module.exports = {
             deny: [PermissionsBitField.Flags.ViewChannel],
           },
         ],
+      });
+    }
+
+    async function sendInvitationNotification(channel, member) {
+      return await channel.send({
+        content: `Give <@${member.id}> a warm welcome to this groupchat!`,
       });
     }
   },
