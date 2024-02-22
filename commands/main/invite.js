@@ -22,7 +22,8 @@ module.exports = {
     const guild = interaction.guild;
     const member = interaction.user;
 
-    const groupchatChannelRegex = /^groupchat-\d+$/;
+    const groupNamePrefix = "dynasty-league-";
+    const groupchatChannelRegex = /^dynasty-league-\d+$/;
 
     const isUserInGroupchat = guild.members.cache
       .get(member.id)
@@ -51,7 +52,7 @@ module.exports = {
     const response = await interaction.reply({
       embeds: [embed],
       components: [row],
-      ephemeral: false,
+      ephemeral: true,
     });
 
     const collectorFilter = (i) => i.user.id === interaction.user.id;
@@ -88,17 +89,11 @@ module.exports = {
             await guild.roles.fetch()
           ).find((role) => role.name === channels[i].name);
 
-          const allMembers = await guild.members.fetch();
-          let trueCount = 0;
-          allMembers.forEach((value) => {
-            console.log(value.roles.size);
-          });
-
           const memberCount = respectiveRole ? respectiveRole.members.size : 0;
           console.log(
             `Member count for ${respectiveRole.name}: ${memberCount}`
           );
-          if (memberCount < 4) {
+          if (memberCount < 12) {
             console.log(`Setting channel to ${channels[i].name}`);
             channel = channels[i];
             break;
@@ -110,7 +105,7 @@ module.exports = {
           const allGroupchatChannels = guild.channels.cache.filter((channel) =>
             groupchatChannelRegex.test(channel.name)
           );
-          newGroupchatName = `groupchat-${allGroupchatChannels.size}`;
+          newGroupchatName = `${groupNamePrefix}${allGroupchatChannels.size}`;
           let role = guild.roles.cache.find(
             (role) => role.name === newGroupchatName
           );
@@ -131,12 +126,17 @@ module.exports = {
         }
 
         // Update initial message
+        const formattedGroupName = capitalizeFirstLetters(
+          newGroupchatName.replaceAll("-", " ")
+        );
+        const formattedResponse = `You've successfully joined the "${formattedGroupName}" groupchat!`;
         const acceptEmbed = new EmbedBuilder()
           .setTitle("Groupchat Invitation")
-          .setDescription(`You've successfully joined ${newGroupchatName}!`);
+          .setDescription(formattedResponse);
 
         await confirmation.update({
           embeds: [acceptEmbed],
+          ephemeral: false,
           components: [],
         });
       } else if (confirmation.customId === "cancel") {
@@ -164,11 +164,10 @@ module.exports = {
       });
     }
 
-    async function createRole(roleName, color = Colors.Blurple) {
+    async function createRole(roleName) {
       console.log(`Creating a role with the name "${roleName}."`);
       return await guild.roles.create({
         name: roleName,
-        color: color,
         reason: `Create role for "${roleName}" chatroom.`,
       });
     }
@@ -190,6 +189,17 @@ module.exports = {
           },
         ],
       });
+    }
+
+    function capitalizeFirstLetters(string) {
+      const words = string.split(" ");
+      const output = [];
+      for (let i = 0; i < words.length; i++) {
+        const word = words[i];
+        const capitalizedWord = word[0].toUpperCase() + word.substring(1);
+        output.push(capitalizedWord);
+      }
+      return output.join(" ");
     }
   },
 };
