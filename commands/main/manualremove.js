@@ -27,7 +27,7 @@ module.exports = {
   async execute(interaction, client) {
     const guild = interaction.guild;
     const member = interaction.options.getUser("user");
-    const channel = interaction.options.getChannel("channel");
+    const groupchat = interaction.options.getChannel("channel");
 
     if (!member) {
       return await interaction.reply({
@@ -35,24 +35,32 @@ module.exports = {
         ephemeral: false,
       });
     }
-    if (!channel) {
+    if (!groupchat) {
       return await interaction.reply({
         content: `No channel was found.`,
         ephemeral: false,
       });
     }
 
+    const groupchatChannelRegex = /^dynasty-league-\d+$/;
+    if (!groupchatChannelRegex.test(groupchat.name)) {
+      return await interaction.reply({
+        content: `Error: Selected channel must be a Dynasty League groupchat.`,
+        ephemeral: false,
+      });
+    }
+
     const channelRole = guild.roles.cache.find(
-      (role) => role.name == channel.name
+      (role) => role.name == groupchat.name
     );
 
     const formattedGroupName = capitalizeFirstLetters(
-      channel.name.replaceAll("-", " ")
+      groupchat.name.replaceAll("-", " ")
     );
 
     const isUserInGroupchat = guild.members.cache
       .get(member.id)
-      .roles.cache.some((role) => role.name == channel.name);
+      .roles.cache.some((role) => role.name == groupchat.name);
 
     if (!isUserInGroupchat) {
       return await interaction.reply({
