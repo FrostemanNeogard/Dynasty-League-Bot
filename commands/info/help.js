@@ -1,4 +1,11 @@
-const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
+const {
+  SlashCommandBuilder,
+  EmbedBuilder,
+  PermissionsBitField,
+  PermissionFlagsBits,
+} = require("discord.js");
+
+const { embed_color } = require("../../config.json");
 
 module.exports = {
   name: "help",
@@ -11,9 +18,14 @@ module.exports = {
       "Replies with a list of all available commands for this bot."
     ),
   async execute(interaction) {
+    const isMemberPrivileged = interaction.member.permissions.has(
+      PermissionFlagsBits.MoveMembers
+    );
+
     const responseEmbed = new EmbedBuilder()
       .setTitle("Help")
       .setDescription("All available commands for this bot.")
+      .setColor(embed_color)
       .setFields(
         {
           name: "/invite",
@@ -21,8 +33,12 @@ module.exports = {
         },
         {
           name: "/leave",
-          value: "Leave the groupchat you are currently in.",
-        },
+          value: "Leave any specified groupchat you are currently in.",
+        }
+      );
+
+    if (isMemberPrivileged) {
+      responseEmbed.addFields(
         {
           name: "/manualadd",
           value: "(MOD COMMAND) Add any given user to any given groupchat.",
@@ -33,8 +49,10 @@ module.exports = {
             "(MOD COMMAND) Remove any given user from any given groupchat.",
         }
       );
+    }
+
     await interaction.reply({
-      ephemeral: false,
+      ephemeral: isMemberPrivileged,
       embeds: [responseEmbed],
     });
   },
