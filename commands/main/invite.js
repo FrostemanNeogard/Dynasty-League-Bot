@@ -6,9 +6,9 @@ const {
   ActionRowBuilder,
   PermissionsBitField,
   ChannelType,
-  Colors,
-  InteractionCollector,
 } = require("discord.js");
+
+const { embed_color } = require("../../config.json");
 
 module.exports = {
   name: "invite",
@@ -17,7 +17,8 @@ module.exports = {
   devCommand: true,
   data: new SlashCommandBuilder()
     .setName("invite")
-    .setDescription("Send an embed with a button to join a group chat."),
+    .setDescription("Send an embed with a button to join a group chat.")
+    .setDMPermission(false),
   async execute(interaction, client) {
     const guild = interaction.guild;
     const member = interaction.user;
@@ -31,6 +32,7 @@ module.exports = {
 
     const embed = new EmbedBuilder()
       .setTitle("Groupchat Invitation")
+      .setColor(embed_color)
       .setDescription(
         `Would you like to join ${
           isUserInGroupchat ? "another" : "a"
@@ -132,6 +134,7 @@ module.exports = {
         const formattedResponse = `You've successfully joined the "${formattedGroupName}" groupchat!`;
         const acceptEmbed = new EmbedBuilder()
           .setTitle("Groupchat Invitation")
+          .setColor(embed_color)
           .setDescription(formattedResponse);
 
         await confirmation.update({
@@ -143,6 +146,7 @@ module.exports = {
         // If user pressed "decline", update the message to inform them about the declined invitation, then do nothing
         const declineEmbed = new EmbedBuilder()
           .setTitle("Groupchat Invitation")
+          .setColor(embed_color)
           .setDescription(`This invitation has been declined.`);
 
         await confirmation.update({
@@ -155,6 +159,7 @@ module.exports = {
 
       const timeoutEmbed = new EmbedBuilder()
         .setTitle("Groupchat Invitation")
+        .setColor(embed_color)
         .setDescription(`This invitation has expired.`);
 
       // Catch any errors that may occurr, and handle invitation timeout
