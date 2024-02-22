@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require("discord.js");
+const { SlashCommandBuilder, PermissionFlagsBits } = require("discord.js");
 
 module.exports = {
   name: "manualremove",
@@ -19,7 +19,9 @@ module.exports = {
         .setName("channel")
         .setDescription("The groupchat to remove said user from.")
         .setRequired(true)
-    ),
+    )
+    .setDMPermission(false)
+    .setDefaultMemberPermissions(PermissionFlagsBits.MoveMembers),
 
   async execute(interaction, client) {
     const guild = interaction.guild;
@@ -43,10 +45,21 @@ module.exports = {
       (role) => role.name == channel.name
     );
 
+    const isUserInGroupchat = guild.members.cache
+      .get(member.id)
+      .roles.cache.some((role) => role.name == channel.name);
+
+    if (!isUserInGroupchat) {
+      return await interaction.reply({
+        content: `Error: User <@${member.id}> is not in the given groupchat: "${channel.name}".`,
+        ephemeral: false,
+      });
+    }
+
     await guild.members.cache.get(member.id).roles.remove(channelRole);
 
     return await interaction.reply({
-      content: `User "${member.tag}" has been removed from the following groupchat: "${channel.name}".`,
+      content: `User <@${member.id}> has been removed from the following groupchat: "${channel.name}".`,
       ephemeral: false,
     });
   },
