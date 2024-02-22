@@ -1,4 +1,5 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require("discord.js");
+const { capitalizeFirstLetters } = require("../../util/functions");
 
 module.exports = {
   name: "manualremove",
@@ -45,13 +46,17 @@ module.exports = {
       (role) => role.name == channel.name
     );
 
+    const formattedGroupName = capitalizeFirstLetters(
+      channel.name.replaceAll("-", " ")
+    );
+
     const isUserInGroupchat = guild.members.cache
       .get(member.id)
       .roles.cache.some((role) => role.name == channel.name);
 
     if (!isUserInGroupchat) {
       return await interaction.reply({
-        content: `Error: User <@${member.id}> is not in the given groupchat: "${channel.name}".`,
+        content: `Error: User <@${member.id}> is not in the given groupchat: "${formattedGroupName}".`,
         ephemeral: false,
       });
     }
@@ -59,7 +64,7 @@ module.exports = {
     await guild.members.cache.get(member.id).roles.remove(channelRole);
 
     return await interaction.reply({
-      content: `User <@${member.id}> has been removed from the following groupchat: "${channel.name}".`,
+      content: `User <@${member.id}> has been removed from the following groupchat: "${formattedGroupName}".`,
       ephemeral: false,
     });
   },
