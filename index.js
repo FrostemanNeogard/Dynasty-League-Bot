@@ -1,7 +1,5 @@
-// Set up the login token as well as the owner ID
 require("dotenv").config();
 const { Client, GatewayIntentBits } = require("discord.js");
-const { owner_id } = require("./config.json");
 const TOKEN = process.env.TOKEN;
 
 // Set up discord client (with intents due to API changes)
@@ -16,10 +14,8 @@ const client = new Client({
 });
 
 // Create bot object
-// Contains the client as well as additional information for command the bot owner's ID
 let bot = {
   client,
-  owner: owner_id,
 };
 
 // Collections for commands and events
