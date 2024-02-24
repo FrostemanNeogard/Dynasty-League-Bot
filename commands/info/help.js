@@ -34,6 +34,10 @@ module.exports = {
         {
           name: "/leave",
           value: "Leave any specified groupchat you are currently in.",
+        },
+        {
+          name: "/membercount",
+          value: "View the member count for any given groupchat.",
         }
       );
 
