@@ -12,12 +12,12 @@ const { embed_color } = require("../../config.json");
 const { capitalizeFirstLetters } = require("../../util/functions");
 
 module.exports = {
-  name: "invite",
+  name: "join-league",
   category: "main",
   permissions: [],
   devCommand: true,
   data: new SlashCommandBuilder()
-    .setName("invite")
+    .setName("join-league")
     .setDescription("Send an embed with a button to join a group chat.")
     .setDMPermission(false),
   async execute(interaction, client) {
