@@ -198,6 +198,10 @@ module.exports = {
 
     async function createChannel(channelName, channelParent, roleId) {
       console.log(`Creating a channel with the name "${channelName}."`);
+      // Notify Jared about new group's creation
+      const jared = await client.users.fetch("144920733854728192");
+      jared.send(`A new groupchat was created with the name "${channelName}".`);
+
       return await guild.channels.create({
         name: channelName,
         type: ChannelType.GuildText,
