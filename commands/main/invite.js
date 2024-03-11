@@ -118,7 +118,9 @@ module.exports = {
           const allGroupchatChannels = guild.channels.cache.filter((channel) =>
             groupchatChannelRegex.test(channel.name)
           );
-          newGroupchatName = `${groupNamePrefix}${allGroupchatChannels.size}`;
+          newGroupchatName = `${groupNamePrefix}${
+            allGroupchatChannels.size + 1
+          }`;
           let role = guild.roles.cache.find(
             (role) => role.name === newGroupchatName
           );
