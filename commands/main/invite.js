@@ -85,9 +85,13 @@ module.exports = {
         });
 
         let groupchatCategory = guild.channels.cache.filter((channel) => {
-          return channel.name == "GROUPCHATS";
+          return channel.name.toLowerCase() == "join bdge dynasty league";
         });
-        groupchatCategory = groupchatCategory.entries().next().value[0];
+        if (groupchatCategory.size === 0) {
+          groupchatCategory = null;
+        } else {
+          groupchatCategory = groupchatCategory.entries().next().value[0];
+        }
 
         // Determine if a channel with an available spot already exists
         let channel;
@@ -124,7 +128,7 @@ module.exports = {
           await guild.members.cache.get(member.id).roles.add(role);
           const newChannel = await createChannel(
             newGroupchatName,
-            groupchatCategory,
+            groupchatCategory ?? null,
             role.id
           );
           await sendInvitationNotification(newChannel, member);
