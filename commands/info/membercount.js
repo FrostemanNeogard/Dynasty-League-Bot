@@ -55,7 +55,7 @@ module.exports = {
 
     return await interaction.reply({
       embeds: [responseEmbed],
-      ephemeral: false,
+      ephemeral: true,
     });
   },
 };
