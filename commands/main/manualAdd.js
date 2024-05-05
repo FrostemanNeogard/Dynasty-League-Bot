@@ -65,14 +65,14 @@ module.exports = {
     if (isUserInGroupchat) {
       return await interaction.reply({
         content: `Error: User <@${member.id}> is already in the given groupchat: "${formattedGroupName}".`,
-        ephemeral: false,
+        ephemeral: true,
       });
     }
 
     await guild.members.cache.get(member.id).roles.add(channelRole);
     return await interaction.reply({
       content: `User <@${member.id}> has been added to the following groupchat: "${formattedGroupName}".`,
-      ephemeral: false,
+      ephemeral: true,
     });
   },
 };
