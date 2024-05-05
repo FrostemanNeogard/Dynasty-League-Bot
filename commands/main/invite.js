@@ -12,12 +12,12 @@ const { embed_color } = require("../../config.json");
 const { capitalizeFirstLetters } = require("../../util/functions");
 
 module.exports = {
-  name: "invite",
+  name: "join-league",
   category: "main",
   permissions: [],
   devCommand: true,
   data: new SlashCommandBuilder()
-    .setName("invite")
+    .setName("join-league")
     .setDescription("Send an embed with a button to join a group chat.")
     .setDMPermission(false),
   async execute(interaction, client) {
@@ -85,9 +85,13 @@ module.exports = {
         });
 
         let groupchatCategory = guild.channels.cache.filter((channel) => {
-          return channel.name == "GROUPCHATS";
+          return channel.name.toLowerCase() == "join bdge dynasty league";
         });
-        groupchatCategory = groupchatCategory.entries().next().value[0];
+        if (groupchatCategory.size === 0) {
+          groupchatCategory = null;
+        } else {
+          groupchatCategory = groupchatCategory.entries().next().value[0];
+        }
 
         // Determine if a channel with an available spot already exists
         let channel;
@@ -114,7 +118,9 @@ module.exports = {
           const allGroupchatChannels = guild.channels.cache.filter((channel) =>
             groupchatChannelRegex.test(channel.name)
           );
-          newGroupchatName = `${groupNamePrefix}${allGroupchatChannels.size}`;
+          newGroupchatName = `${groupNamePrefix}${
+            allGroupchatChannels.size + 1
+          }`;
           let role = guild.roles.cache.find(
             (role) => role.name === newGroupchatName
           );
@@ -124,7 +130,7 @@ module.exports = {
           await guild.members.cache.get(member.id).roles.add(role);
           const newChannel = await createChannel(
             newGroupchatName,
-            groupchatCategory,
+            groupchatCategory ?? null,
             role.id
           );
           await sendInvitationNotification(newChannel, member);
@@ -192,6 +198,10 @@ module.exports = {
 
     async function createChannel(channelName, channelParent, roleId) {
       console.log(`Creating a channel with the name "${channelName}."`);
+      // Notify Jared about new group's creation
+      const jared = await client.users.fetch("144920733854728192");
+      jared.send(`A new groupchat was created with the name "${channelName}".`);
+
       return await guild.channels.create({
         name: channelName,
         type: ChannelType.GuildText,

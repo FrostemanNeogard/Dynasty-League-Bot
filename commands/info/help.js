@@ -28,7 +28,7 @@ module.exports = {
       .setColor(embed_color)
       .setFields(
         {
-          name: "/invite",
+          name: "/join-league",
           value: "Recieve an invitation for a groupchat.",
         },
         {
