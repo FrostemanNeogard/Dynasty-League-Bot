@@ -65,7 +65,7 @@ module.exports = {
     if (!isUserInGroupchat) {
       return await interaction.reply({
         content: `Error: User <@${member.id}> is not in the given groupchat: "${formattedGroupName}".`,
-        ephemeral: false,
+        ephemeral: true,
       });
     }
 
@@ -73,7 +73,7 @@ module.exports = {
 
     return await interaction.reply({
       content: `User <@${member.id}> has been removed from the following groupchat: "${formattedGroupName}".`,
-      ephemeral: false,
+      ephemeral: true,
     });
   },
 };
