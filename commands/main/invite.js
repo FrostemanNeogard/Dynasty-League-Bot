@@ -220,8 +220,12 @@ module.exports = {
     }
 
     async function sendInvitationNotification(channel, member) {
+      const joinedEmbed = new EmbedBuilder().setColor(embed_color).setFields({
+        name: "New member!",
+        value: `<@${member.id}> has joined this groupchat!`,
+      });
       return await channel.send({
-        content: `Give <@${member.id}> a warm welcome to this groupchat!`,
+        embeds: [joinedEmbed],
       });
     }
   },
