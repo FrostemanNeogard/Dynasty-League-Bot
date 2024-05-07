@@ -95,10 +95,15 @@ module.exports = {
 
         // Determine if a channel with an available spot already exists
         let channel;
+        const roles = await guild.roles.fetch();
         for (let i = 0; i < channels.length; i++) {
-          const respectiveRole = await (
-            await guild.roles.fetch()
-          ).find((role) => role.name === channels[i].name);
+          const respectiveRole = roles.find(
+            (role) => role.name === channels[i].name
+          );
+
+          if (!respectiveRole) {
+            continue;
+          }
 
           const memberCount = respectiveRole ? respectiveRole.members.size : 0;
           console.log(
