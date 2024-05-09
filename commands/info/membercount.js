@@ -37,6 +37,8 @@ module.exports = {
       });
     }
 
+    await guild.members.fetch();
+
     const channelRole = (await guild.roles.fetch()).find(
       (role) => role.name == groupchat.name
     );
