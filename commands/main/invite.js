@@ -71,6 +71,7 @@ module.exports = {
           return;
         }
 
+        await guild.members.fetch();
         const channels = [];
         guild.channels.cache.filter(async (channel) => {
           if (groupchatChannelRegex.test(channel.name)) {
