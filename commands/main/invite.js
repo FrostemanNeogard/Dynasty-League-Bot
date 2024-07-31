@@ -84,6 +84,7 @@ module.exports = {
             }
           }
         });
+        channels.sort();
 
         let groupchatCategory = guild.channels.cache.filter((channel) => {
           return channel.name.toLowerCase() == "join bdge dynasty league";
