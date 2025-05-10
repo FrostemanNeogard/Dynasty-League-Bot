@@ -1,0 +1,7 @@
+services:
+  bot:
+    build: .
+    volumes:
+      - /usr/src/app
+    command: npm run start
+    restart: always
