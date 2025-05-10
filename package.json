@@ -6,10 +6,11 @@
     "dotenv": "^16.0.0",
     "needle": "^3.3.1"
   },
-  "name": "gttc",
+  "name": "dynasty-league-bot",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "start": "node .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
