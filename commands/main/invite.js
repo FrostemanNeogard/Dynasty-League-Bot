@@ -86,15 +86,6 @@ module.exports = {
         });
         channels.sort();
 
-        let groupchatCategory = guild.channels.cache.filter((channel) => {
-          return channel.name.toLowerCase() == "join bdge dynasty league";
-        });
-        if (groupchatCategory.size === 0) {
-          groupchatCategory = null;
-        } else {
-          groupchatCategory = groupchatCategory.entries().next().value[0];
-        }
-
         // Determine if a channel with an available spot already exists
         let channel;
         const roles = await guild.roles.fetch();
@@ -125,9 +116,8 @@ module.exports = {
           const allGroupchatChannels = guild.channels.cache.filter((channel) =>
             groupchatChannelRegex.test(channel.name)
           );
-          newGroupchatName = `${groupNamePrefix}${
-            allGroupchatChannels.size + 1
-          }`;
+          const channelNumber = allGroupchatChannels.size + 1;
+          newGroupchatName = `${groupNamePrefix}${channelNumber}`;
           let role = guild.roles.cache.find(
             (role) => role.name === newGroupchatName
           );
@@ -135,6 +125,21 @@ module.exports = {
             role = await createRole(newGroupchatName);
           }
           await guild.members.cache.get(member.id).roles.add(role);
+
+          let groupchatCategory = guild.channels.cache.filter((channel) => {
+            return (
+              channel.name.toLowerCase() ==
+              (channelNumber < 50
+                ? "join bdge dynasty league"
+                : "dynasty leagues 50 - 100")
+            );
+          });
+          if (groupchatCategory.size === 0) {
+            groupchatCategory = null;
+          } else {
+            groupchatCategory = groupchatCategory.entries().next().value[0];
+          }
+
           const newChannel = await createChannel(
             newGroupchatName,
             groupchatCategory ?? null,
