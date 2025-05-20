@@ -105,7 +105,7 @@ module.exports = {
             }: ${memberCount}`
           );
           if (memberCount < 12) {
-            if (Number(channels[i].name.split("-")[2]) <= 49) {
+            if (Number(channels[i].name.split("-")[2]) <= 48) {
               console.log(`Skipping channel ${channels[i].name}`);
               continue;
             }
