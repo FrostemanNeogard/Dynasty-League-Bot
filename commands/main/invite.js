@@ -133,7 +133,7 @@ module.exports = {
           let groupchatCategory = guild.channels.cache.filter((channel) => {
             return (
               channel.name.toLowerCase() ==
-              (channelNumber < 50
+              (channelNumber < 51
                 ? "join bdge dynasty league"
                 : "dynasty leagues 50 - 100")
             );
