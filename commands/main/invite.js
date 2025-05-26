@@ -105,7 +105,7 @@ module.exports = {
             }: ${memberCount}`
           );
           if (memberCount < 12) {
-            if (Number(channels[i].name.split("-")[2]) <= 48) {
+            if (Number(channels[i].name.split("-")[2]) <= 50) {
               console.log(`Skipping channel ${channels[i].name}`);
               continue;
             }
@@ -133,7 +133,7 @@ module.exports = {
           let groupchatCategory = guild.channels.cache.filter((channel) => {
             return (
               channel.name.toLowerCase() ==
-              (channelNumber < 51
+              (channelNumber < 50
                 ? "join bdge dynasty league"
                 : "dynasty leagues 50 - 100")
             );
